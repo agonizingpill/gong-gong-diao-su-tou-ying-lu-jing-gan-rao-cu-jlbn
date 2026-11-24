@@ -18,9 +18,12 @@ def segment_bank(conn, user, data):
 
 
 def pin_map(conn, user, data):
+    from domain.plot_checks import adjudicate_pending
     run=result(user,data.token)
     band=get(conn,sculpture_bands,run['input']['band']['code'],lock=True)
     model=run['result']
     need(band['revision']==run['input']['band']['revision'],'观测版本已有更新，重新划分灯组')
-    return insert(conn,shadow_plans,code=data.code,band=band['code'],revision=band['revision'],
+    plan=insert(conn,shadow_plans,code=data.code,band=band['code'],revision=band['revision'],
                   clusters=model['clusters'],layout=model['layout'],evidence=model['evidence'],token=data.token)
+    plan['rulings'] = adjudicate_pending(conn, plan)
+    return plan

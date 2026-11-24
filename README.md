@@ -9,7 +9,9 @@
 - 雕塑投影带 `sculpture_bands`，字段为 `title`（虚构展品）、`cols`（网格列数）、`rows`（网格行数）、`revision`（观测版本）、`scope`（造型种类）。模型约束位于 `backend/domain/sculpture_bands_model.py`，规则位于 `sculpture_bands_service.py`。
 - 遮挡观测格 `sight_cells`，字段为 `band`（投影带）、`x`（列坐标）、`y`（行坐标）、`shade`（遮挡面积比）、`spill`（串光面积比）、`owner`（当前责任灯组）、`protected`（雕塑保护观察位）。模型约束位于 `backend/domain/sight_cells_model.py`，规则位于 `sight_cells_service.py`。
 - 遮挡图谱 `shadow_plans`，字段为 `band`（投影带）、`revision`（底图版本）、`clusters`（簇数）、`layout`（簇及网格坐标）、`evidence`（谱聚类统计）、`token`（任务凭证）。模型约束位于 `backend/domain/shadow_plans_model.py`，规则位于 `shadow_plans_service.py`。
-- 观察位灯组责任 `light_handoffs`，字段为 `plan`（谱图）、`cell`（观察格）、`cluster`（关联簇）、`source`（交出灯组）、`target`（接收灯组）、`status`（移交状态）、`first_sign`（领班签署人）、`second_sign`（复核签署人）。模型约束位于 `backend/domain/light_handoffs_model.py`，规则位于 `light_handoffs_service.py`。
+- 观察位灯组责任 `light_handoffs`，字段为 `plan`（谱图）、`cell`（观察格）、`cluster`（关联簇）、`source`（交出灯组）、`target`（接收灯组）、`status`（移交状态）、`first_sign`（领班签署人）、`second_sign`（复核签署人）、`first_plan`（首签所用图谱）、`ruling_plan`（裁定所用图谱）、`ruling_reason`（裁定结果）。模型约束位于 `backend/domain/light_handoffs_model.py`，规则位于 `light_handoffs_service.py`。
+
+补测只抬升观测版本，待二签的保护位移交单不再随补测作废，而是等待该观测版本首次归档的图谱裁定：新旧两图中观察位所在簇的格子集合完全相同则沿用首签（簇编号变化不影响），少一格或多一格均退回领班。每张移交单只裁定一次，归档重试与同版另图均不重复裁定、不翻案；补测后须先完成裁定，复核员才能二签转走灯组责任。
 
 ### 一天的业务操作
 
